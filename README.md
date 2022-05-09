@@ -20,9 +20,9 @@ Ensure your Json payload is as follows; .
 
 "contact_details": {
 
-  'client_name': "Ebuka Chinedu", 
-  'client_email': "Ebuka Chinedu", 
-  'client_phone': "+2347067979346"
+  'client_name': "QI Solutions", 
+  'client_email': "info@qisolutions.co.za", 
+  'client_phone': "+27 87 750 8185"
   }, 
 "ticket_items": {
 
@@ -62,9 +62,9 @@ from datetime import datetime
 
 parameter = {
         "contact_details": {
-            'client_name': "Ebuka Chinedu", 
-            'client_email': "ebuka@gmail.com", 
-            'client_phone': "+2347067979346", 
+            'client_name': "QI Solutions", 
+  'client_email': "info@qisolutions.co.za", 
+  'client_phone': "+27 87 750 8185", 
             },
         "ticket_items": { 
             "description": "Request for a fix...",
