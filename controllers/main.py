@@ -100,7 +100,7 @@ class APIController(http.Controller):
                 category.email, vals.get("client_email"), custombody, False)
             ticket.action_submit()
             # http.Response.status = "201"
-            return """<h1> Issues Submitted successfully... Please expect our response
+            return """<h1> Ticket successfully submmitted. Our team will act on this shortly
         </h1>"""
         #     return request.render("helpdesk_api.helpdesk_successful_template", qcontext={'id':ticket})
         except Exception as e:
