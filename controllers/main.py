@@ -3,6 +3,7 @@ import logging
 from odoo import _
 from odoo import http
 from odoo.http import request
+
 _logger = logging.getLogger(__name__)
 
 
@@ -35,7 +36,7 @@ class APIController(http.Controller):
                 error_item.append(
                     "Category ID provide is not existing on the database \n ")
         return error_item
-    
+
     @http.route("/api/v1/issues/categories", type="json", auth="public", methods=["GET"], csrf=False)
     def get_categories(self, **kw):
         response = {
@@ -57,7 +58,8 @@ class APIController(http.Controller):
         http.Response.status = "201"
         return {
             "status": "successful",
-            "ticket_data": [{'id': ticket.id, 'ticket_id': ticket.name, 'client_email': ticket.client_email} for ticket in helpdesk_tickets]
+            "ticket_data": [{'id': ticket.id, 'ticket_id': ticket.name, 'client_email': ticket.client_email} for ticket
+                            in helpdesk_tickets]
         }
 
     # @http.route("/api/v1/issues", type="http", auth="public", methods=["POST"], csrf=False)
@@ -91,23 +93,26 @@ class APIController(http.Controller):
                 'note': kw.get("note"),
                 'active': True,
                 # 'sla_id': sla_id,
+
+
                 'priority': "1" if priority == "low" else "2" if priority == "medium" else "3" if priority == "high" else "4" if priority == "urgent" else "0",
             }
             ticket = HelpdeskTicket.create(vals)
             # ticket.compute_ticket_deadline()
-            custombody = category.custom_html or category.auto_msgs or "Ticket successfully submmitted. Our team will act on this shortly"
+            custombody = category.custom_html or category.auto_msgs or "Ticket successfully submmitted.. Our team will act on this shortly"
             ticket.send_mail(
                 category.email, vals.get("client_email"), custombody, False)
             ticket.action_submit()
             # http.Response.status = "201"
-            return f"""<h1> Issues Submitted successfully... Please expect our response shortly, your ticket number is {ticket.name}
-        </h1>"""
-        #     return request.render("helpdesk_api.helpdesk_successful_template", qcontext={'id':ticket})
+            return f"""<h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ticket successfully submmitted, Our team will act on this shortly</h1> 
+        <h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Here is your Ticket Number!&nbsp; {ticket.name}</2> 
+        """
+       #     return request.render("helpdesk_api.helpdesk_successful_template", qcontext={'id':ticket})
         except Exception as e:
             _logger.exception(e)
             # http.Response.status = "400"
             return {"status": "failure", "message": str(e)}
-        
+
     @http.route("/helpdesk/ticket", type="http", website=True, auth="public", methods=["GET"], csrf=False)
     def home(self, **kw):
         helpdesk_categories = request.env['helpdeskcategory.model'].sudo().search([])

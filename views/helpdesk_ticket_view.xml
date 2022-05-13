@@ -227,6 +227,7 @@
                 <field name="assigned_user"/>
                 <field name="stage_id"/>
                 <field name="category"/>
+                <field name="sub_category"/>
                 <field name="client_email"/>
                 <field name="priority"/>
                 <field name="expected_date" force_save="1"/>
@@ -409,7 +410,8 @@
                 <field name="assigned_user"/>
                 <field name="stage_id" string="Status"/>
                 <field name="priority"/>
-                <field name="category"/> 
+                <field name="category"/>
+                <field name="sub_category"/>
                 <field name="close_ticket" string="Is Closed?"/> 
                 <field name="sla_failed" invisible="0"/>
                 <field name="diff_failed_sla_duration" string="Escalation (Days)"/>
@@ -456,6 +458,7 @@
                             <field name="client_email" required = "1" attrs="{'readonly': [('status', '!=', 'new')]}"/>
                             <field name="company_id" attrs="{'readonly': [('status', '!=', 'new')],'required': [('ticket_type', '=', 'customer')]}" force_save="1" options="{'no_create': True, 'no_open': True}" />
                             <field name="category" attrs="{'readonly': [('status', '!=', 'new')], 'required': [('ticket_type', '=', 'customer')]}" options="{'no_create': True, 'no_open': True}"/>
+                             <field name="sub_category" attrs="{'readonly': [('status', '!=', 'new')], 'required': [('ticket_type', '=', 'customer')]}" options="{'no_create': True, 'no_open': True}"/>
                             <p style="color:Teal;">Contact User with Manager access to assign to another user...</p>
                             <field name="assigned_user" options="{'no_create': True, 'no_open': True}" groups="helpdesk_api.group_helpdesk_super_user,helpdesk_api.group_helpdesk_issue_manager"/>
                         </group>

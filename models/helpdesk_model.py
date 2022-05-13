@@ -6,6 +6,7 @@ from odoo.exceptions import ValidationError
 from datetime import datetime, timedelta
 from odoo.tools.safe_eval import safe_eval
 import logging
+
 _logger = logging.getLogger(__name__)
 
 TICKET_PRIORITY = [
@@ -15,6 +16,7 @@ TICKET_PRIORITY = [
     ('3', 'High priority'),
     ('4', 'Urgent'),
 ]
+
 
 class TicketModel(models.Model):
     _name = 'helpdeskticket.model'
@@ -50,7 +52,6 @@ class TicketModel(models.Model):
             defaults.update(custom_values)
         return super(TicketModel, self).message_new(msg, custom_values=defaults)
 
-
     def _get_user_tickets(self):
         tickets = self.env['helpdeskticket.model'].search_count([('create_uid', '=', self.env.user.id)])
         if tickets:
@@ -61,17 +62,19 @@ class TicketModel(models.Model):
         return tickets if tickets else 0
 
     def _get_issue_other_centered_tickets(self):
-        tickets = self.env['helpdeskticket.model'].search_count([('ticket_type', '=',['other', 'issue'])])
+        tickets = self.env['helpdeskticket.model'].search_count([('ticket_type', '=', ['other', 'issue'])])
         return tickets if tickets else 0
 
     def _get_closed_tickets(self):
         closed_stage_id = self.env.ref('helpdesk_api.closed_stage_id').id
-        tickets = self.env['helpdeskticket.model'].search_count([('create_uid', '=', self.env.user.id),('close_ticket', '=', True)])
+        tickets = self.env['helpdeskticket.model'].search_count(
+            [('create_uid', '=', self.env.user.id), ('close_ticket', '=', True)])
         return tickets if tickets else 0
 
     def _get_opened_tickets(self):
         new_stage_id = self.env.ref('helpdesk_api.new_stage_id').id
-        tickets = self.env['helpdeskticket.model'].search_count([('create_uid', '=', self.env.user.id),('close_ticket', '=', False)])
+        tickets = self.env['helpdeskticket.model'].search_count(
+            [('create_uid', '=', self.env.user.id), ('close_ticket', '=', False)])
         return tickets if tickets else 0
 
     def _get_my_tickets_tickets(self):
@@ -80,23 +83,25 @@ class TicketModel(models.Model):
 
     def _get_solved_tickets(self):
         solved_stage_id = self.env.ref('helpdesk_api.solved_stage_id').id
-        tickets = self.env['helpdeskticket.model'].search_count([('create_uid', '=', self.env.user.id),('close_ticket', '=', True), ('sla_failed', '=', False)])
+        tickets = self.env['helpdeskticket.model'].search_count(
+            [('create_uid', '=', self.env.user.id), ('close_ticket', '=', True), ('sla_failed', '=', False)])
         return tickets if tickets else 0
 
     def _get_unassigned_tickets(self):
-        tickets = self.env['helpdeskticket.model'].search_count([('assigned_user', '=',False)])
+        tickets = self.env['helpdeskticket.model'].search_count([('assigned_user', '=', False)])
         return tickets if tickets else 0
 
     def _get_failed_sla_tickets(self):
         progress_stage_id = self.env.ref('helpdesk_api.progress_stage_id').id
         new_stage_id = self.env.ref('helpdesk_api.new_stage_id').id
-        tickets = self.env['helpdeskticket.model'].search_count([('create_uid', '=', self.env.user.id),('close_ticket', '=', False), ('sla_failed', '=', True)])
+        tickets = self.env['helpdeskticket.model'].search_count(
+            [('create_uid', '=', self.env.user.id), ('close_ticket', '=', False), ('sla_failed', '=', True)])
 
         # tickets = self.env['helpdeskticket.model'].search_count([('expected_date', '<', fields.Datetime.now()), ('stage_id', 'in', [False, progress_stage_id, new_stage_id])])
         return tickets if tickets else 0
 
     def _get_high_priority_tickets(self):
-        tickets = self.env['helpdeskticket.model'].search_count([('priority', '=',3)])
+        tickets = self.env['helpdeskticket.model'].search_count([('priority', '=', 3)])
         return tickets if tickets else 0
 
     def _get_urgent_priority_tickets(self):
@@ -109,7 +114,7 @@ class TicketModel(models.Model):
     # 	action['display_name'] = title
     # 	# action['search_view_id'] = self.env.ref(search_view_ref).read()[0]
     # 	action['views'] = [(False, view) for view in action['view_mode'].split(",")]
-        
+
     # 	return {'action': action}
 
     @api.model
@@ -121,18 +126,18 @@ class TicketModel(models.Model):
             action['search_view_id'] = self.env.ref(search_view_ref).read()[0]
         action['views'] = [(False, view) for view in action['view_mode'].split(",")]
         return {'action': action}
-        
+
     # def create_action(self, domain="one"):
     # 	domain = [('create_uid', '=', self.env.user.id)]
     # 	title = "My tickets"
     # 	if domain == "two":
     # 		domain = [('create_uid', '=', self.env.user.id)]
-        
+
     # 	tickets = self.env['helpdeskticket.model'].search(domain)
     # 	form_view_ref = self.env.ref('helpdesk_api.helpdeskticket_view_form')
     # 	search_view_ref = self.env.ref('helpdesk_api.helpdeskticket_model_view_search')
     # 	tree_view_ref = self.env.ref('helpdesk_api.helpdesktickets_view_tree')
-        
+
     # 	return {
     # 		'domain': [('id', 'in', [rec.id for rec in tickets])],
     # 		'name': title,
@@ -177,61 +182,75 @@ class TicketModel(models.Model):
     client_email = fields.Char(string="Client Email", store=True)
     client_name = fields.Char(string="Client Name")
     company_id = fields.Many2one('res.company', string="Company", domain=lambda self: self._domain_get_user_companies())
-    partner_id = fields.Many2one("res.partner", string="Customer", required=False, default = lambda rec: rec.env.user.partner_id.id)
+    partner_id = fields.Many2one("res.partner", string="Customer", required=False,
+                                 default=lambda rec: rec.env.user.partner_id.id)
     email_logs = fields.Many2many("mail.mail", string="Mails", readonly=True)
-    category = fields.Many2one("helpdeskcategory.model", string="Category", required=False,domain=lambda self: self._domain_company_categories())
+    category = fields.Many2one("helpdeskcategory.model", string="Category", required=False,
+                               domain=lambda self: self._domain_company_categories())
+    sub_category = fields.Selection([
+        ('ETQA LP', 'ETQA LP'),
+        ('DG', 'DG'),
+        ('Skills', 'Skills'),
+        ('All Modules', 'All Modules'),
+        ('Helpdesk', 'Helpdesk'),
+    ], string='Sub Category', default='Helpdesk')
     sla_id = fields.Many2one('helpdesk.tracker.sla', string="SLA", store=True)
-    duration = fields.Integer(string="Duration")# , compute="compute_ticket_duration")
-    num_tickets = fields.Integer(string="Tickets", default= lambda self: self._get_user_tickets())
+    duration = fields.Integer(string="Duration")  # , compute="compute_ticket_duration")
+    num_tickets = fields.Integer(string="Tickets", default=lambda self: self._get_user_tickets())
     color = fields.Integer('Color')
     file = fields.Binary('Upload Document')
     file_name = fields.Char('File name')
     sla_duration = fields.Char('SLA Duration')
     diff_failed_sla_duration = fields.Integer('SLA Escalated(Days)')
 
-    ticket_type = fields.Selection([('customer', 'Customer Centered'), ('issue', 'Issue'), ('other', 'Others')], default='customer', string="Ticket Type")
+    ticket_type = fields.Selection([('customer', 'Customer Centered'), ('issue', 'Issue'), ('other', 'Others')],
+                                   default='customer', string="Ticket Type")
     priority = fields.Selection(
         TICKET_PRIORITY, string='Priority',
         help='Tickets under this priority will not be taken into account.')
     status = fields.Selection([('new', 'New'), ('open', 'Open'), ('close', 'Closed')], default='new', string="Status")
     submitted_date = fields.Datetime(string='Submitted Date')
-    expected_date = fields.Datetime(string='Deadline Date', compute="compute_deadline_date", store=True, help="Compute SLA Fail to true if the current date is greater than the deadline date")
+    expected_date = fields.Datetime(string='Deadline Date', compute="compute_deadline_date", store=True,
+                                    help="Compute SLA Fail to true if the current date is greater than the deadline date")
     write_ids = fields.Many2many('res.users', string="Modifiers", compute="compute_modifiers")
-    stage_id = fields.Many2one('helpdeskstages.model', string="Stages", default=lambda s: s.env.ref('helpdesk_api.new_stage_id').id)
+    stage_id = fields.Many2one('helpdeskstages.model', string="Stages",
+                               default=lambda s: s.env.ref('helpdesk_api.new_stage_id').id)
     active = fields.Boolean(string="Active", default=True)
     close_ticket = fields.Boolean(string="Closed", default=False)
     response = fields.Integer('Response time(hours)', default=1, required=False, compute="compute_sla_id")
-    time_days = fields.Integer('Day(s)', default=0, help="Days to reach given stage based on ticket creation date", compute="compute_sla_id", store=True)
-    time_hours = fields.Integer('Hour(s)', default=0, help="Hours to reach given stage based on ticket creation date", compute="compute_sla_id", store=True)
+    time_days = fields.Integer('Day(s)', default=0, help="Days to reach given stage based on ticket creation date",
+                               compute="compute_sla_id", store=True)
+    time_hours = fields.Integer('Hour(s)', default=0, help="Hours to reach given stage based on ticket creation date",
+                                compute="compute_sla_id", store=True)
 
     @api.model
     def create(self, vals):
         sequence = self.env['ir.sequence'].next_by_code('helpdeskticket.model')
-        last_create_ticket = self.env['helpdeskticket.model'].search([])
-        ticketid= f'TIC00000 {str(last_create_ticket[-1].id)}' if last_create_ticket else f'TIC00000{self.id}'
+        last_id = self.env['helpdeskticket.model'].search([], order='id desc')[0].id
+        ticketid = f'TIC00000 {last_id}' if last_id else f'TIC00000{self.last_id}'
         vals['name'] = sequence or ticketid
         return super(TicketModel, self).create(vals)
-        
+
     def write(self, vals):
         if 'comment' in vals:
             body = '''Dear {0}, <br/>A comment was added on the ticket with ID {1} by {2}
             '''.format(self.partner_id.name or self.client_name, self.name, self.env.user.name)
             mail_id = self.send_mail(self.company_id.email, self.client_email, body, False)
         res = super(TicketModel, self).write(vals)
-        vals['write_ids']= [(4, self.env.user.id)]
+        vals['write_ids'] = [(4, self.env.user.id)]
         return res
 
     def action_submit(self):
         self.status = 'open'
         self.submitted_date = fields.Datetime.now()
         self.send_stage_notification()
-    
+
     @api.onchange('partner_id')
     def onchange_partner_id(self):
         for rec in self:
             if rec.partner_id and rec.ticket_type != "issue":
-                rec.client_email = rec.partner_id.email 
-                rec.client_name = rec.partner_id.name 
+                rec.client_email = rec.partner_id.email
+                rec.client_name = rec.partner_id.name
 
     @api.onchange('priority')
     def onchange_priority(self):
@@ -241,22 +260,22 @@ class TicketModel(models.Model):
                     # ('company_id', '=', self.company_id.id),
                     ('category_id', '=', self.category.id),
                     ('priority', '=', self.priority),
-                    ], limit=1)
+                ], limit=1)
                 if sla:
                     rec.sla_id = sla.id
                 # else:
                 # 	raise ValidationError('There is no sla generated for this priority')
- 
+
     @api.depends('sla_id')
     def compute_sla_id(self):
         for rec in self:
             if rec.sla_id:
-                rec.response = rec.sla_id.response 
-                rec.time_days = rec.sla_id.time_days 
-                rec.time_hours = rec.sla_id.time_hours 
+                rec.response = rec.sla_id.response
+                rec.time_days = rec.sla_id.time_days
+                rec.time_hours = rec.sla_id.time_hours
             else:
                 rec.response = False
-                rec.time_days = False 
+                rec.time_days = False
                 rec.time_hours = False
 
     @api.depends('submitted_date', 'time_days', 'time_hours')
@@ -280,7 +299,7 @@ class TicketModel(models.Model):
                     rec.diff_failed_sla_duration = date_diff.days if date_diff.days > 0 else 0
 
                 else:
-                    rec.sla_failed = False 
+                    rec.sla_failed = False
 
     @api.depends('category')
     def compute_modifiers(self):
@@ -288,7 +307,7 @@ class TicketModel(models.Model):
             if rec.category:
                 rec.write_ids = [(4, usr.id) for usr in rec.category.mapped('user_ids')]
             else:
-                rec.write_ids = False 
+                rec.write_ids = False
 
     @api.onchange('ticket_type')
     def compute_ticket_type(self):
@@ -307,7 +326,7 @@ class TicketModel(models.Model):
                 body = "Dear {0}, <br/>This is to inform you that ticket with ID {1}\
                         have been assigned to - {2}.<br/>\
                         Regards".format(rec.partner_id.name or rec.client_name, rec.name, rec.assigned_user.name)
-                mail_id = rec.send_mail(rec.company_id.email, rec.client_email, body, False) 
+                mail_id = rec.send_mail(rec.company_id.email, rec.client_email, body, False)
                 rec.write({'email_logs': [(4, mail_id.id)]})
 
     @api.onchange('category')
@@ -323,7 +342,7 @@ class TicketModel(models.Model):
                         lists.append(stg.id)
                 domain = {'stage_id': [('id', 'in', lists)], 'sla_id': [('id', 'in', [sla.id for sla in sla_ids])]}
                 return {'domain': domain}
-    
+
     @api.onchange('stage_id')
     def move_stage_action(self):
         if self.description:
@@ -347,7 +366,7 @@ class TicketModel(models.Model):
                 self.status = 'close'
 
     def toggle_close_ticket_action(self):
-        for rec in self: 
+        for rec in self:
             progress_stage_id = self.env.ref('helpdesk_api.progress_stage_id').id
             closed_stage_id = self.env.ref('helpdesk_api.closed_stage_id').id
             if rec.close_ticket:
@@ -371,27 +390,27 @@ class TicketModel(models.Model):
             body = "Dear {0}, <br/>This is to inform you that ticket with ID {1}\
                  is in progress and have been assigned to - {2}.<br/>\
                  Regards".format(rec.partner_id.name or rec.client_name, rec.name, rec.assigned_user.name)
-            mail_id = self.send_mail(self.company_id.email, self.client_email, body, False) 
+            mail_id = self.send_mail(self.company_id.email, self.client_email, body, False)
             rec.write({
-            'email_logs': [(4, mail_id.id)], 'status': 'open', 'stage_id': progress_stage_id,
+                'email_logs': [(4, mail_id.id)], 'status': 'open', 'stage_id': progress_stage_id,
             })
 
     def send_stage_notification(self):
-        for rec in self: 
+        for rec in self:
             user = self.env.user.name
             body = f"Dear {rec.partner_id.name or rec.client_name}, <br/>This is to inform you that ticket with ID {rec.name}\
                  is moved to {rec.stage_id.name or 'progress'} by {user}.<br/>\
                  Regards"
-            mail_id = self.send_mail(self.company_id.email, self.client_email, body, False) 
+            mail_id = self.send_mail(self.company_id.email, self.client_email, body, False)
             rec.update({
-            'email_logs': [(4, mail_id.id)]
+                'email_logs': [(4, mail_id.id)]
             })
 
     def all_my_tickets(self):
         return self.get_my_ticket_action_record()
 
     def toggle_active(self):
-        self.active = True if self.active == False else False  
+        self.active = True if self.active == False else False
 
     def validate_and_get_email(self):
         email_to = None
@@ -418,7 +437,7 @@ class TicketModel(models.Model):
         # """args: inform_internal_users determines if the mail is sent to users who picks up the ticket"""
         # body = email_template.body_html
         #  if inform_internal_users else custom_body if custom_body else "Ticket have been generated with ID # {}".format(self.name)
-        subject_msg = self.name # if not client_send else self.category.auto_msgs() 
+        subject_msg = self.name  # if not client_send else self.category.auto_msgs()
         subject = "HELPDESK NOTIFICATION #{}".format(subject_msg)
         recipients = [rec.login for rec in self.category.mapped('user_ids')]
         mail_data = {
@@ -429,10 +448,10 @@ class TicketModel(models.Model):
             'body_html': body,
         }
         mail_id = self.env['mail.mail'].create(mail_data)
-        return mail_id 
-        
+        return mail_id
+
         # self.env['mail.mail'].send(mail_id)
- 
+
     def get_record_reference(self):
         reference_id = self.env['helpdeskticket.model'].search([('id', '=', self.id)])
         if not reference_id:
@@ -452,16 +471,17 @@ class TicketModel(models.Model):
         tree_view_ref = self.env.ref(action_tree_xmlid, False)
         form_view_ref = self.env.ref(action_form_xmlid, False)
         domain = None
-        helpdesk_all = self.env['helpdeskticket.model'].search([('assigned_user', '=', self.env.user.id), ('write_ids', 'in', [self.assigned_user.id])])
+        helpdesk_all = self.env['helpdeskticket.model'].search(
+            [('assigned_user', '=', self.env.user.id), ('write_ids', 'in', [self.assigned_user.id])])
         return {
             'domain': [('id', 'in', [rec.id for rec in helpdesk_all])],
             'name': 'My Tickets',
             'res_model': 'helpdeskticket.model',
             'type': 'ir.actions.act_window',
-            'views': [(tree_view_ref.id, 'tree'),(form_view_ref.id, 'form')],
-        } 
+            'views': [(tree_view_ref.id, 'tree'), (form_view_ref.id, 'form')],
+        }
 
-    # @api.multi
+        # @api.multi
+
     def get_my_ticket_action_record(self):
         return self._get_action('helpdesk_api.helpdeskticket_view_form', 'helpdesk_api.helpdesktickets_view_tree')
-
