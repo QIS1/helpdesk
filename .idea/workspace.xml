@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="17d9dfc1-a32b-4c03-9ddf-b3f8c9a62439" name="Changes" comment="message changed">
-      <change afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/main.py" afterDir="false" />
+    <list default="true" id="17d9dfc1-a32b-4c03-9ddf-b3f8c9a62439" name="Changes" comment="Sub Category field added but not finalized field, Ticket number not Increamenting Fixed, and  submission message changed.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models/helpdesk_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/helpdesk_model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/views/helpdesk_ticket_view.xml" beforeDir="false" afterPath="$PROJECT_DIR$/views/helpdesk_ticket_view.xml" afterDir="false" />
     </list>
@@ -26,7 +25,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../Program Files/Odoo 14" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RunManager">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
@@ -163,7 +162,21 @@
       <option name="project" value="LOCAL" />
       <updated>1652102229833</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Sub Category field added but not finalized field, Ticket number not Increamenting Fixed, and  submission message changed.">
+      <created>1652456053687</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1652456053687</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Sub Category field added but not finalized field, Ticket number not Increamenting Fixed, and  submission message changed.">
+      <created>1652456094435</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1652456094435</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -179,6 +192,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="message changed" />
-    <option name="LAST_COMMIT_MESSAGE" value="message changed" />
+    <MESSAGE value="Sub Category field added but not finalized field, Ticket number not Increamenting Fixed, and  submission message changed." />
+    <option name="LAST_COMMIT_MESSAGE" value="Sub Category field added but not finalized field, Ticket number not Increamenting Fixed, and  submission message changed." />
   </component>
 </project>

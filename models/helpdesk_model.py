@@ -227,7 +227,7 @@ class TicketModel(models.Model):
     def create(self, vals):
         sequence = self.env['ir.sequence'].next_by_code('helpdeskticket.model')
         last_id = self.env['helpdeskticket.model'].search([], order='id desc')[0].id
-        ticketid = f'TIC00000 {last_id}' if last_id else f'TIC00000{self.last_id}'
+        ticketid = f'TIC00000 {str(last_id)}' if last_id else f'TIC00000{self.last_id}'
         vals['name'] = sequence or ticketid
         return super(TicketModel, self).create(vals)
 
