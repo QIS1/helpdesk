@@ -193,7 +193,7 @@ class TicketModel(models.Model):
         ('Skills', 'Skills'),
         ('All Modules', 'All Modules'),
         ('Helpdesk', 'Helpdesk'),
-    ], string='Sub Category', default='Helpdesk')
+    ], string='Sub Category')
     sla_id = fields.Many2one('helpdesk.tracker.sla', string="SLA", store=True)
     duration = fields.Integer(string="Duration")  # , compute="compute_ticket_duration")
     num_tickets = fields.Integer(string="Tickets", default=lambda self: self._get_user_tickets())
@@ -226,10 +226,18 @@ class TicketModel(models.Model):
     @api.model
     def create(self, vals):
         sequence = self.env['ir.sequence'].next_by_code('helpdeskticket.model')
-        last_id = self.env['helpdeskticket.model'].search([], order='id desc')[0].id
-        ticketid = f'TIC00000 {str(last_id)}' if last_id else f'TIC00000{self.last_id}'
+        last_id = self.env['helpdeskticket.model'].search([], order='id desc')
+        ticketid = f'TIC00000{str(last_id[0].id+1)}' if last_id else f'TIC000001'
         vals['name'] = sequence or ticketid
         return super(TicketModel, self).create(vals)
+
+    # @api.model
+    # def create(self, vals):
+    #     sequence = self.env['ir.sequence'].next_by_code('helpdeskticket.model')
+    #     last_create_ticket = self.env['helpdeskticket.model'].search([])
+    #     ticketid = f'TIC00000{str(last_create_ticket[-1].id)}' if last_create_ticket else f'TIC000001'
+    #     vals['name'] = sequence or ticketid
+    #     return super(TicketModel, self).create(vals)
 
     def write(self, vals):
         if 'comment' in vals:

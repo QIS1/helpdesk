@@ -411,6 +411,7 @@
                 <field name="stage_id" string="Status"/>
                 <field name="priority"/>
                 <field name="category"/>
+                <field name="sub_category"/>
                 <field name="close_ticket" string="Is Closed?"/> 
                 <field name="sla_failed" invisible="0"/>
                 <field name="diff_failed_sla_duration" string="Escalation (Days)"/>
